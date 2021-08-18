@@ -1,8 +1,8 @@
 classdef Satellite2D < DynSys
   properties
     % Input bounds
-    uMin = [-1, -1]
-    uMax = [1, 1]
+    uMin = [-20, -20]
+    uMax = [20, 20]
     
     n = 1.25 % Mean-motion
     mass = 1.25 % mass

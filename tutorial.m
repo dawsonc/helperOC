@@ -38,8 +38,8 @@ function tutorial()
 compTraj = true;
 
 %% Grid
-grid_min = [-3; -3; -pi]; % Lower corner of computation domain
-grid_max = [3; 3; pi];    % Upper corner of computation domain
+grid_min = [-10; -10; -pi]; % Lower corner of computation domain
+grid_max = [10; 10; pi];    % Upper corner of computation domain
 N = [51; 51; 51];         % Number of grid points per dimension
 pdDims = 3;               % 3rd dimension is periodic
 g = createGrid(grid_min, grid_max, N, pdDims);
@@ -54,7 +54,7 @@ data0 = shapeCylinder(g, 3, [0; 0; 0], R);
 
 %% time vector
 t0 = 0;
-tMax = 4;
+tMax = 8;
 dt = 0.05;
 tau = t0:dt:tMax;
 
@@ -109,8 +109,15 @@ HJIextraArgs.visualize.deleteLastPlot = true; %delete previous plot as you updat
 %HJIextraArgs.visualize.plotData.projpt = [0]; %project at theta = 0
 %HJIextraArgs.visualize.viewAngle = [0,90]; % view 2D
 
-obstacles = shapeCylinder(g, 3, [0.75; 0.2; 0], 0.5);
-HJIextraArgs.obstacles = obstacles;
+cutout_plane_1 = shapeHyperplane(g, [-1; 1; 0], [0; 0; 0]);
+cutout_plane_2 = shapeHyperplane(g, [1; 1; 0], [0; 0; 0]);
+cutout = shapeIntersection(cutout_plane_1, cutout_plane_2);
+keepout = shapeCylinder(g, 3, [0; 0; 0], 3.0);
+unsafe_zone = shapeDifference(keepout, cutout);
+max_radius = shapeComplement(shapeSphere(g, [0; 0; 0], 9.0));
+unsafe_zone = shapeUnion(unsafe_zone, max_radius);
+% obstacles = shapeCylinder(g, 3, [0.75; 0.2; 0], 0.5);
+HJIextraArgs.obstacles = unsafe_zone;
 
 %[data, tau, extraOuts] = ...
 % HJIPDE_solve(data0, tau, schemeData, minWith, extraArgs)
@@ -123,7 +130,7 @@ HJIextraArgs.obstacles = obstacles;
 if compTraj
   
   %set the initial state
-  xinit = [2.5, 0.0, -2.0];
+  xinit = [-3.5, -0.8, -1.0];
   
   %check if this initial state is in the BRS/BRT
   %value = eval_u(g, data, x)

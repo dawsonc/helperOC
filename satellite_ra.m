@@ -36,16 +36,16 @@ addpath(genpath("/home/cbd/src/mit/helperOC"));
 addpath(genpath("/home/cbd/src/helperOC"));
 
 %% Should we compute the trajectory?
-compTraj = false;
+compTraj = true;
 
 %% Should we load an HJI solution from a file?
 loadHJI = false;
 
 %% Grid
-grid_min = [-4; -4; -4; -4]; % Lower corner of computation domain
-grid_max = [4; 4; 4; 4];    % Upper corner of computation domain
+grid_min = [-10; -10; -10; -10]; % Lower corner of computation domain
+grid_max = [10; 10; 10; 10];    % Upper corner of computation domain
 N = [51; 51; 51; 51];         % Number of grid points per dimension
-% N = [3; 3; 3; 3];
+% N = [21; 21; 21; 21];
 g = createGrid(grid_min, grid_max, N);
 
 %% target set
@@ -56,14 +56,14 @@ data0 = shapeSphere(g, [0; 0; 0; 0], R);
 
 %% time vector
 t0 = 0;
-tMax = 0.05;
+tMax = 3.0;
 dt = 0.05;
 tau = t0:dt:tMax;
 
 %% problem parameters
 
 % do dStep1 here
-dMax = [0.0, 0.0];
+dMax = [1, 1];
 
 % control trying to min or max value function?
 uMode = 'min';
@@ -97,13 +97,15 @@ HJIextraArgs.visualize.deleteLastPlot = true; %delete previous plot as you updat
 HJIextraArgs.visualize.plotData.plotDims = [1 1 0 0]; %plot x, y
 HJIextraArgs.visualize.plotData.projpt = [0 0]; %project at vx = vy = 0
 % HJIextraArgs.visualize.viewAngle = [0,90]; % view 2D
-% HJIextraArgs.visualize.valueFunction = true;
+HJIextraArgs.visualize.valueFunction = true;
 
 cutout_plane_1 = shapeHyperplane(g, [-1; 1; 0; 0], [0; 0; 0; 0]);
 cutout_plane_2 = shapeHyperplane(g, [1; 1; 0; 0], [0; 0; 0; 0]);
 cutout = shapeIntersection(cutout_plane_1, cutout_plane_2);
 keepout = shapeCylinder(g, [3, 4], [0; 0; 0; 0], 3.0);
 unsafe_zone = shapeDifference(keepout, cutout);
+max_radius = shapeComplement(shapeSphere(g, [0; 0; 0; 0], 9.0));
+unsafe_zone = shapeUnion(unsafe_zone, max_radius);
 % obstacles = shapeCylinder(g, 3, [0.75; 0.2; 0], 0.5);
 HJIextraArgs.obstacles = unsafe_zone;
 
@@ -122,7 +124,7 @@ end
 if compTraj
   
   %set the initial state
-  xinit = [-0.1, -0.5, 0.0, 0.0];
+  xinit = [0.0, -1.0, 0.0, 0.0];
   
   %check if this initial state is in the BRS/BRT
   %value = eval_u(g, data, x)
@@ -163,8 +165,8 @@ if compTraj
     figure(4)
     plot(traj(1,:), traj(2,:))
     hold on
-    xlim([-1 1])
-    ylim([-1 1])
+%     xlim([-1 1])
+%     ylim([-1 1])
     % add the target set to that
     [g2D, data2D] = proj(g, data0, [0 0 1 1]);
     visSetIm(g2D, data2D, 'green');
