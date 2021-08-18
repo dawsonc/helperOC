@@ -1,4 +1,4 @@
-function tutorial()
+function satellite_ra()
 % 1. Run Backward Reachable Set (BRS) with a goal
 %     uMode = 'min' <-- goal
 %     minWith = 'none' <-- Set (not tube)
@@ -32,7 +32,8 @@ function tutorial()
 % 8. Add random disturbance (white noise)
 %     add the following code:
 %     HJIextraArgs.addGaussianNoiseStandardDeviation = [0; 0; 0.5];
-
+addpath(genpath("/home/cbd/src/mit/helperOC"));
+addpath(genpath("/home/cbd/src/helperOC"));
 
 %% Should we compute the trajectory?
 compTraj = false;
@@ -113,15 +114,15 @@ HJIextraArgs.obstacles = unsafe_zone;
 if ~loadHJI
     [data, tau2, ~] = ...
       HJIPDE_solve(data0, tau, schemeData, 'minVOverTime', HJIextraArgs);
-    save("satellite_hji_solution.m", ["data", "tau2", "g"]);
-elseif
-    load("satellite_hji_solution.m", ["data", "tau2", "g"]);
+    save("satellite_hji_solution.mat", "data", "tau2", "g");
+else
+    load("satellite_hji_solution.mat", "data", "tau2", "g");
 end
 %% Compute optimal trajectory from some initial state
 if compTraj
   
   %set the initial state
-  xinit = [-0.1, -0.7, 0.0, 0.0];
+  xinit = [-0.1, -0.5, 0.0, 0.0];
   
   %check if this initial state is in the BRS/BRT
   %value = eval_u(g, data, x)
