@@ -115,7 +115,17 @@ while iter <= tauLength
     else
         d = dynSys.optDstb(tau(tEarliest), dynSys.x, deriv);
     end
+%     disp("===========")
+%     disp("u")
+%     disp(u)
+%     disp("d")
+%     disp(d)
+%     disp("x")
+%     disp(dynSys.x)
     dynSys.updateState(u, dtSmall, dynSys.x, d);
+%     disp("new x")
+%     disp(dynSys.x)
+%     disp("===========")
   end
   
   % Record new point on nominal trajectory
