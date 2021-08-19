@@ -45,7 +45,7 @@ loadHJI = false;
 grid_min = [-10; -10; -10; -10]; % Lower corner of computation domain
 grid_max = [10; 10; 10; 10];    % Upper corner of computation domain
 N = [51; 51; 51; 51];         % Number of grid points per dimension
-N = [21; 21; 21; 21];
+% N = [21; 21; 21; 21];
 g = createGrid(grid_min, grid_max, N);
 
 %% target set
