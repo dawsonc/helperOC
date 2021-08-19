@@ -36,10 +36,10 @@ addpath(genpath("/home/cbd/src/mit/helperOC"));
 addpath(genpath("/home/cbd/src/helperOC"));
 
 %% Should we compute the trajectory?
-compTraj = true;
+compTraj = false;
 
 %% Should we load an HJI solution from a file?
-loadHJI = true;
+loadHJI = false;
 
 %% Grid
 grid_min = [-10; -10; -10; -10]; % Lower corner of computation domain
