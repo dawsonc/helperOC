@@ -1,4 +1,4 @@
-function uOpt = optCtrl(obj, ~, ~, deriv, uMode)
+function uOpt = optCtrl(obj, ~, x, deriv, uMode)
 % uOpt = optCtrl(obj, t, y, deriv, uMode)
 
 %% Input processing
@@ -11,15 +11,19 @@ if ~iscell(deriv)
 end
 
 %% Optimal control
-theta = x{dims==2};
-G = deriv{dims==3} * (-1.8 * cos(theta) - 10.9) / (cos(theta) - 24.7);
-G = G + deriv{dims==4} * (9.3 * cos(theta) + 38.6) / (cos(theta) ^ 2 - 24.7);
+dims = obj.dims;
+if iscell(x)
+    theta = x{dims==2};
+else
+    theta = x(dims==2);
+end
+G = deriv{dims==3} .* (-1.8 .* cos(theta) - 10.9) ./ (cos(theta) - 24.7);
+G = G + deriv{dims==4} .* (9.3 .* cos(theta) + 38.6) ./ (cos(theta) .^ 2 - 24.7);
 if strcmp(uMode, 'max')
-  uOpt = (G>=0)*obj.wRange(2) + (G<0)*(obj.wRange(1));
+  uOpt = (G>=0)*obj.uRange(2) + (G<0)*(obj.uRange(1));
 elseif strcmp(uMode, 'min')
-  uOpt = (G>=0)*(obj.wRange(1)) + (G<0)*obj.wRange(2);
+  uOpt = (G>=0)*(obj.uRange(1)) + (G<0)*obj.uRange(2);
 else
   error('Unknown uMode!')
 end
-
 end

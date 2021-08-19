@@ -44,14 +44,16 @@ switch dim
     dx = x{dims==4};
   case 3
     theta = x{dims==2};
+    v = x{dims==3};
     theta_dot = x{dims==4};
-    dx = (cos(theta) * (9.8 * sin(theta) + 11.5 * v) + 68.4 * v - 1.2 * (theta_dot ^ 2) * sin(theta)) / (cos(theta) - 24.7);
-    dx = dx + u * (-1.8 * cos(theta) - 10.9) / (cos(theta) - 24.7) + d{1};
+    dx = (cos(theta) .* (9.8 .* sin(theta) + 11.5 .* v) + 68.4 .* v - 1.2 .* (theta_dot .^ 2) .* sin(theta)) ./ (cos(theta) - 24.7);
+    dx = dx + u{1} .* (-1.8 .* cos(theta) - 10.9) ./ (cos(theta) - 24.7) + d{1};
   case 4
     theta = x{dims==2};
+    v = x{dims==3};
     theta_dot = x{dims==4};
-    dx = (-58.8 * v * cos(theta) - 243.5 * v - sin(theta) * (208.3 + (theta_dot ^ 2) * cos(theta))) / (torch.cos(theta) ^ 2 - 24.7);
-    dx = dx + u * (9.3 * cos(theta) + 38.6) / (cos(theta) ^ 2 - 24.7) + d{2};
+    dx = (-58.8 .* v .* cos(theta) - 243.5 .* v - sin(theta) .* (208.3 + (theta_dot .^ 2) .* cos(theta))) ./ (cos(theta) .^ 2 - 24.7);
+    dx = dx + u{1} .* (9.3 .* cos(theta) + 38.6) ./ (cos(theta) .^ 2 - 24.7) + d{2};
   otherwise
     error('Only dimension 1-4 are defined for dynamics of Segway!')
 end
