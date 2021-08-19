@@ -115,6 +115,7 @@ while iter <= tauLength
     else
         d = dynSys.optDstb(tau(tEarliest), dynSys.x, deriv);
     end
+
 %     disp("===========")
 %     disp("u")
 %     disp(u)

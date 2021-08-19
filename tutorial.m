@@ -40,7 +40,10 @@ compTraj = true;
 %% Grid
 grid_min = [-10; -10; -pi]; % Lower corner of computation domain
 grid_max = [10; 10; pi];    % Upper corner of computation domain
+grid_min = [-4; -4; -pi]; % Lower corner of computation domain
+grid_max = [4; 4; pi];    % Upper corner of computation domain
 N = [51; 51; 51];         % Number of grid points per dimension
+% N = [21; 21; 21];         % Number of grid points per dimension
 pdDims = 3;               % 3rd dimension is periodic
 g = createGrid(grid_min, grid_max, N, pdDims);
 % Use "g = createGrid(grid_min, grid_max, N);" if there are no periodic
@@ -54,7 +57,7 @@ data0 = shapeCylinder(g, 3, [0; 0; 0], R);
 
 %% time vector
 t0 = 0;
-tMax = 8;
+tMax = 2;
 dt = 0.05;
 tau = t0:dt:tMax;
 
@@ -130,7 +133,7 @@ HJIextraArgs.obstacles = unsafe_zone;
 if compTraj
   
   %set the initial state
-  xinit = [-3.5, -0.8, -1.0];
+  xinit = [0.0, -1.5, 1.5];
   
   %check if this initial state is in the BRS/BRT
   %value = eval_u(g, data, x)

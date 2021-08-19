@@ -39,13 +39,13 @@ addpath(genpath("/home/cbd/src/helperOC"));
 compTraj = true;
 
 %% Should we load an HJI solution from a file?
-loadHJI = false;
+loadHJI = true;
 
 %% Grid
 grid_min = [-10; -10; -10; -10]; % Lower corner of computation domain
 grid_max = [10; 10; 10; 10];    % Upper corner of computation domain
 N = [51; 51; 51; 51];         % Number of grid points per dimension
-% N = [21; 21; 21; 21];
+N = [21; 21; 21; 21];
 g = createGrid(grid_min, grid_max, N);
 
 %% target set
@@ -96,8 +96,8 @@ HJIextraArgs.visualize.deleteLastPlot = true; %delete previous plot as you updat
 % uncomment if you want to see a 2D slice
 HJIextraArgs.visualize.plotData.plotDims = [1 1 0 0]; %plot x, y
 HJIextraArgs.visualize.plotData.projpt = [0 0]; %project at vx = vy = 0
-% HJIextraArgs.visualize.viewAngle = [0,90]; % view 2D
-HJIextraArgs.visualize.valueFunction = true;
+HJIextraArgs.visualize.viewAngle = [0,90]; % view 2D
+% HJIextraArgs.visualize.valueFunction = true;
 
 cutout_plane_1 = shapeHyperplane(g, [-1; 1; 0; 0], [0; 0; 0; 0]);
 cutout_plane_2 = shapeHyperplane(g, [1; 1; 0; 0], [0; 0; 0; 0]);
@@ -106,7 +106,6 @@ keepout = shapeCylinder(g, [3, 4], [0; 0; 0; 0], 3.0);
 unsafe_zone = shapeDifference(keepout, cutout);
 max_radius = shapeComplement(shapeSphere(g, [0; 0; 0; 0], 9.0));
 unsafe_zone = shapeUnion(unsafe_zone, max_radius);
-% obstacles = shapeCylinder(g, 3, [0.75; 0.2; 0], 0.5);
 HJIextraArgs.obstacles = unsafe_zone;
 
 %[data, tau, extraOuts] = ...
@@ -116,7 +115,7 @@ HJIextraArgs.obstacles = unsafe_zone;
 if ~loadHJI
     [data, tau2, ~] = ...
       HJIPDE_solve(data0, tau, schemeData, 'minVOverTime', HJIextraArgs);
-    save("satellite_hji_solution.mat", "data", "tau2", "g");
+    save("satellite_hji_solution.mat", "data", "tau2", "g", "-v7.3");
 else
     load("satellite_hji_solution.mat", "data", "tau2", "g");
 end
@@ -124,7 +123,7 @@ end
 if compTraj
   
   %set the initial state
-  xinit = [0.0, -1.0, 0.0, 0.0];
+  xinit = [4.0, 0.0, 0.0, 0.0];
   
   %check if this initial state is in the BRS/BRT
   %value = eval_u(g, data, x)
@@ -170,6 +169,10 @@ if compTraj
     % add the target set to that
     [g2D, data2D] = proj(g, data0, [0 0 1 1]);
     visSetIm(g2D, data2D, 'green');
+    [g2D, data2D] = proj(g, shapeDifference(keepout, cutout), [0 0 1 1]);
+    visSetIm(g2D, data2D, 'red');
+    [g2D, data2D] = proj(g, shapeSphere(g, [0; 0; 0; 0], 9.0), [0 0 1 1]);
+    visSetIm(g2D, data2D, 'red');
     title('2D projection of the trajectory & target set')
     hold off
   else
