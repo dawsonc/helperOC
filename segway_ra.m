@@ -42,10 +42,10 @@ compTraj = true;
 loadHJI = false;
 
 %% Grid
-grid_min = [-1.5; -pi/2; -3; -pi]; % Lower corner of computation domain
-grid_max = [1.5; pi/2; 3; pi];    % Upper corner of computation domain
+grid_min = [-1.3; -0.8; -2; -1]; % Lower corner of computation domain
+grid_max = [1.3; 0.8; 2; 1];    % Upper corner of computation domain
 % N = [51; 51; 51; 51];         % Number of grid points per dimension
-N = [21; 21; 21; 21];
+N = [17; 17; 17; 17];
 g = createGrid(grid_min, grid_max, N);
 
 %% target set
@@ -55,14 +55,14 @@ data0 = shapeSphere(g, [1, 0, 0, 0], R);
 
 %% time vector
 t0 = 0;
-tMax = 2.0;
+tMax = 5.0;
 dt = 0.05;
 tau = t0:dt:tMax;
 
 %% problem parameters
 
 % do dStep1 here
-dMax = 0*[1, 1];
+dMax = [0.1, 0.1];
 
 % control trying to min or max value function?
 uMode = 'min';
