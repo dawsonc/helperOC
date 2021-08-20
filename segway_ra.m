@@ -42,14 +42,11 @@ compTraj = true;
 loadHJI = false;
 
 %% Grid
-grid_min = [-4; -pi; -4; -2*pi]; % Lower corner of computation domain
-grid_max = [4; pi; 4; 2*pi];    % Upper corner of computation domain
-grid_min = [-4; -pi; -4; -2*pi]; % Lower corner of computation domain
-grid_max = [4; pi; 4; 2*pi];    % Upper corner of computation domain
-N = [51; 51; 51; 51];         % Number of grid points per dimension
-% N = [11; 11; 11; 11];
-pdDims = 2;               % 2nd dimension is periodic
-g = createGrid(grid_min, grid_max, N, pdDims);
+grid_min = [-1.5; -pi/2; -3; -pi]; % Lower corner of computation domain
+grid_max = [1.5; pi/2; 3; pi];    % Upper corner of computation domain
+% N = [51; 51; 51; 51];         % Number of grid points per dimension
+N = [21; 21; 21; 21];
+g = createGrid(grid_min, grid_max, N);
 
 %% target set
 R = 0.2;
@@ -58,7 +55,7 @@ data0 = shapeSphere(g, [1, 0, 0, 0], R);
 
 %% time vector
 t0 = 0;
-tMax = 10.0;
+tMax = 2.0;
 dt = 0.05;
 tau = t0:dt:tMax;
 
