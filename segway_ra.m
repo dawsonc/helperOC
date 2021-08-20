@@ -36,21 +36,23 @@ addpath(genpath("/home/cbd/src/mit/helperOC"));
 addpath(genpath("/home/cbd/src/helperOC"));
 
 %% Should we compute the trajectory?
-compTraj = true;
+compTraj = false;
 
 %% Should we load an HJI solution from a file?
 loadHJI = false;
 
 %% Grid
-grid_min = [-1.3; -0.8; -2; -1]; % Lower corner of computation domain
-grid_max = [1.3; 0.8; 2; 1];    % Upper corner of computation domain
+grid_min = [-1.3; -pi; -2; -1]; % Lower corner of computation domain
+grid_max = [1.3; pi; 2; 1];    % Upper corner of computation domain
 % N = [51; 51; 51; 51];         % Number of grid points per dimension
-N = [17; 17; 17; 17];
-g = createGrid(grid_min, grid_max, N);
+N = [41; 41; 11; 11];
+% N = [11; 11; 11; 11];
+pdDims = 2;
+g = createGrid(grid_min, grid_max, N, pdDims);
 
 %% target set
-R = 0.2;
-data0 = shapeSphere(g, [1, 0, 0, 0], R);
+R = 0.3;
+data0 = shapeCylinder(g, [3, 4], [1, 0, 0, 0], R);
 % also try shapeRectangleByCorners, shapeSphere, etc.
 
 %% time vector
@@ -78,7 +80,7 @@ dSegway = Segway([0, 0, 0, 0], dMax); %do dStep3 here
 % Put grid and dynamic systems into schemeData
 schemeData.grid = g;
 schemeData.dynSys = dSegway;
-schemeData.accuracy = 'high'; %set accuracy
+schemeData.accuracy = 'low'; %set accuracy
 schemeData.uMode = uMode;
 %do dStep4 here
 schemeData.dMode = dMode;
@@ -106,8 +108,6 @@ plane_4 = shapeHyperplane(g, [-1; 1; 0; 0], [-0.5; 0.5; 0; 0]);
 keepout = shapeIntersection(plane_1, plane_2);
 keepout = shapeIntersection(keepout, plane_3);
 keepout = shapeIntersection(keepout, plane_4);
-max_radius = shapeComplement(shapeSphere(g, [0; 0; 0; 0], 4.0));
-unsafe_zone = shapeUnion(keepout, max_radius);
 HJIextraArgs.obstacles = keepout;
 
 %[data, tau, extraOuts] = ...
@@ -121,11 +121,17 @@ if ~loadHJI
 else
     load("segway_hji_solution.mat", "data", "tau2", "g");
 end
+
+%% Plot the initial BRT
+figure(1)
+[g2D, data2D] = proj(g, data(:, :, :, :, end), [0 0 1 1]);
+visSetIm(g2D, data2D, 'red');
+
 %% Compute optimal trajectory from some initial state
 if compTraj
   
   %set the initial state
-  xinit = [1, -1.0, 0.0, 0.0];
+  xinit = [1, 0.0, 0.0, 0.0];
   
   %check if this initial state is in the BRS/BRT
   %value = eval_u(g, data, x)
@@ -171,6 +177,8 @@ if compTraj
     % add the target set to that
     [g2D, data2D] = proj(g, data0, [0 0 1 1]);
     visSetIm(g2D, data2D, 'green');
+    [g2D, data2D] = proj(g, unsafe_zone, [0 0 1 1]);
+    visSetIm(g2D, data2D, 'red');
     title('2D projection of the trajectory & target set')
     hold off
   else

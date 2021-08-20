@@ -1,7 +1,7 @@
 classdef Segway < DynSys
   properties
     % Input bounds
-    uRange = [-10, 10]
+    uRange = [-20, 20]
     
     % Disturbance
     dRange
